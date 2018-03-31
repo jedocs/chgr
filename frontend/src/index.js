@@ -12,7 +12,6 @@ window.addEventListener('load', () => {
             reqData()
         }, 50)
     })
-
     
     var canvas = document.getElementById("background");
     if (canvas.getContext) { // Canvas Support

@@ -9,60 +9,6 @@ extern "C" {
 #include "lib/locks.h"
 #include "chgr.h"
 
-//static void httpd_websocket_save_config(struct altcp_pcb *pcb)
-//{
- // uint8_t response;
- // if (save_flash_config())
-   // response = RES_SAVE_CONFIG_SUCCESS;
-  //else
-    //response = RES_SAVE_CONFIG_FAILURE;
-  //httpd_websocket_write(pcb, &response, 1, WS_BIN_MODE);
-//}
-/*
-static bool httpd_websocket_clear_config(struct altcp_pcb *pcb)
-{
-  uint8_t response;
-  // Clear the configuration by writing config version zero
-  //bool success = clear_flash_config();
-  //if (success)
-  //{
-    //response = RES_CLEAR_CONFIG_SUCCESS;
-    //load_hardcoded_config();
- // }
-  //else
-  //{
-   // response = RES_CLEAR_CONFIG_FAILURE;
-  //}
-  httpd_websocket_write(pcb, 10, 1, 0x02);
-  return success;
-}*/
-/*
-static void send_pid_params(struct altcp_pcb *pcb, pid_controller_index idx)
-{
-  uint8_t buf[14];
-  buf[0] = RES_PID_PARAMS;
-  buf[1] = idx;
-  int32_t *params = (int32_t *)(&buf[2]);
-  {
-    MutexLock lock(pid_mutex);
-    params[0] = my_config.pid_coeffs_arr[idx].p;
-    params[1] = my_config.pid_coeffs_arr[idx].i;
-    params[2] = my_config.pid_coeffs_arr[idx].d;
-  }
-  httpd_websocket_write(pcb, buf, sizeof(buf), WS_BIN_MODE);
-}
-
-static void send_orientation(struct altcp_pcb *pcb)
-{
-  uint8_t buf[5];
-  buf[0] = RES_ORIENTATION;
-  int16_t *qdata = (int16_t *)&buf[1];
-  orientation my_orientation = get_orientation();
-  qdata[0] = my_orientation.sin_pitch / 2;
-  qdata[1] = my_orientation.sin_roll / 2;
-  httpd_websocket_write(pcb, buf, sizeof(buf), WS_BIN_MODE);
-}
-*/
 static void httpd_websocket_cb(struct altcp_pcb *pcb, uint8_t *data,
                          uint16_t data_len, uint8_t mode)
 {
@@ -78,59 +24,20 @@ static void httpd_websocket_cb(struct altcp_pcb *pcb, uint8_t *data,
 
   switch (msgtype)
   {
-    case STEERING:
+    //case STEERING:
       // Parameters: velocity (int8_t), turn rate (int8_t)
       /*if (data_len != 2) break;
       signed_data = (int8_t *)payload;
       set_steering((FLT_TO_Q16(SPEED_CONTROL_FACTOR) * signed_data[1]) / 128,
         (FLT_TO_Q16(STEERING_FACTOR) * signed_data[0]) / 128);
-      */break;
+      *///break;
 
-    case REQ_ORIENTATION:
-      if (data_len != 0) break;
+    //case REQ_ORIENTATION:
+      //if (data_len != 0) break;
       //send_orientation(pcb);
-      break;
+      //break;
 
-    case REQ_SET_PID_PARAMS:
-      // Parameters: pid index (uint8_t), P (q16/int32_t), I (q16), D (q16)
-      if (data_len != 13) break;
-/*
-      pid_index = (pid_controller_index)payload[0];
-      i32_data = (int32_t *)(&payload[1]);
-      if (pid_index < (sizeof(pid_settings_arr) / sizeof(pid_settings_arr[0])))
-      {
-        update_pid_controller(pid_index, i32_data[0], i32_data[1],
-            i32_data[2]);
-        res = RES_SET_PID_PARAMS_ACK;
-        httpd_websocket_write(pcb, &res, 1, WS_BIN_MODE);
-      }
-*/
-      break;
 
-    case REQ_GET_PID_PARAMS:
-      if (data_len != 1) break;
-  //    if (payload[0] < (sizeof(pid_settings_arr) / sizeof(pid_settings_arr[0])))
-    //  {
-      //  send_pid_params(pcb, (pid_controller_index)payload[0]);
-      //}
-      break;
-
-    case REQ_LOAD_FLASH_CONFIG:
-      if (data_len != 0) break;
-      //load_config();
-      //res = RES_LOAD_FLASH_CONFIG_DONE;
-      //httpd_websocket_write(pcb, &res, 1, 0x02);
-      break;
-
-    case REQ_SAVE_CONFIG:
-      if (data_len != 0) break;
-      //httpd_websocket_save_config(pcb);
-      break;
-
-    case REQ_CLEAR_CONFIG:
-      if (data_len != 0) break;
-      //httpd_websocket_clear_config(pcb);
-      break;
   }
 }
 
