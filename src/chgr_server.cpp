@@ -1,6 +1,20 @@
 extern "C" {
 #include <string.h>
 #include <espressif/esp_common.h>
+#include <esp/uart.h>
+
+
+#include <stdint.h>
+#include <sys/types.h>
+#include <stdlib.h>
+#include <unistd.h>
+//#include <string.h>
+//#include <esp8266.h>
+//#include <esp/uart.h>
+#include <stdio.h>
+#include "FreeRTOS.h"
+#include "task.h"
+
 }
 #include <lwip/altcp.h>
 #include <lwip/tcpip.h>
@@ -8,6 +22,9 @@ extern "C" {
 
 #include "lib/locks.h"
 #include "chgr.h"
+
+#define SOF_ 170
+#define EOF_ 171
 
 static void httpd_websocket_cb(struct altcp_pcb *pcb, uint8_t *data,
                          uint16_t data_len, uint8_t mode)
@@ -41,30 +58,40 @@ static void httpd_websocket_cb(struct altcp_pcb *pcb, uint8_t *data,
   }
 }
 
+
 static void battery_task(void *pvParameter)
 {
-  uint32_t battery_value = 0;
-  uint16_t cnt = 0;
-  for (;;)
-  {
-    battery_value = sdk_system_adc_read();
-  
-    {
-      LwipCoreLock lock();
-      uint8_t buf[3];
-      buf[0] = 0;
-      uint16_t *payload = (uint16_t *)&buf[1];
-//      payload[0] = battery_value;
-	  cnt += 1;
-	  if (cnt > 1023) cnt = 0;
-	  payload[0] = battery_value;
-      httpd_websocket_broadcast(buf, sizeof(buf), 0x02);
-      
-      
-            
-    }
+    
+    char ch;
+    char idx;
+    uint8_t buf[10];
+      //uint16_t *payload = (uint16_t *)&buf[0];
 
-    vTaskDelay(5);
+  for (;;)
+  
+  {
+	   	   
+	   ch = getchar();
+       if (ch==SOF_)  
+       {
+		   idx=0;
+	   }
+		   
+	   else if ((ch==EOF_) && (idx==10))
+			{
+			LwipCoreLock lock();
+			httpd_websocket_broadcast(buf, sizeof(buf), WS_BIN_MODE);
+			idx=0;
+		   }
+		   
+		else {
+		if (idx<10)
+			{
+			buf[idx]=ch;
+			idx++;
+			}
+		}
+  //         vTaskDelay(5);
   }
 
   vTaskDelete(NULL);

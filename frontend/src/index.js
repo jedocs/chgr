@@ -15,8 +15,8 @@ window.addEventListener('load', () => {
     
     var canvas = document.getElementById("background");
     if (canvas.getContext) { // Canvas Support
-       //canvas.height = window.innerHeight;
-	   //canvas.width = window.innerWidth;
+       canvas.height = 800;//window.innerHeight;
+	   canvas.width = window.innerWidth;
        var ctx = canvas.getContext("2d");
        // Work with context
        var grd=ctx.createLinearGradient(0,0,ctx.canvas.height,ctx.canvas.width);
@@ -31,27 +31,25 @@ window.addEventListener('load', () => {
     //var canvas = document.getElementById("canvas1")
 	var dist_gauge = new LinearGauge({
     renderTo: 'distance',
-    width: 495,
-    height: 80,
+    width: 130, //canvas.width*0.5,//495 ,
+    height: 600,
     minValue: 0,
-    maxValue: 25,
+    maxValue: 200,
     fontTitleSize: 40,
     fontNumbersSize: 35,
-    title: "distance to client, cm",
-    
+    title: "distance, mm",
     majorTicks: [
         "0",
-        "5",
-        "10",
-        "15",
-        "20",
-        "25"
+        "50",
+        "100",
+        "150",
+        "200"
     ],
     highlights: [
-		{ "from": 0, "to": 7, "color": "rgba(255, 50, 50, .5)" },
-        { "from": 7, "to": 12, "color": "rgba(255, 255, 50, .5)" },
-        { "from": 12, "to": 18, "color": "rgba(50, 255, 50, .5)" },
-		{ "from": 18, "to": 25, "color": "rgba(255, 255, 50, .5)" }
+		{ "from": 0, "to": 50, "color": "rgba(255, 50, 50, .5)" },
+        { "from": 50, "to": 80, "color": "rgba(255, 255, 50, .5)" },
+        { "from": 80, "to": 120, "color": "rgba(50, 255, 50, .5)" },
+		{ "from": 120, "to": 200, "color": "rgba(255, 255, 50, .5)" }
     ],
     highlightsWidth: 20,
     minorTicks: 5,
@@ -74,38 +72,34 @@ window.addEventListener('load', () => {
     animation: false,
     barWidth: 5,
     ticksWidth: 30,
-    ticksWidthMinor: 20,
-    valueBox: true
-}).draw();
+    ticksWidthMinor: 20
 
+}).draw();
+/*
   var batt_chg_gauge = new LinearGauge({
     renderTo: 'batt_chg',
-    width: 180,
-    height: 350,
-    units: "batt. chg., %",
-    minValue: 0,
-    maxValue: 100,
+    width: 600,
+    height: 250,
+    units: "batt. voltage",
+    minValue: 250,
+    maxValue: 375,
     fontTitleSize: 30,
     majorTicks: [
-        "0",
-        "10",
-        "20",
-        "30",
-        "40",
-        "50",
-        "60",
-        "70",
-        "80",
-        "90",
-        "100"
-        
+        "250",
+        "275",
+        "300",
+        "325",
+        "350",
+        "375",
+        "400"
     ],
     minorTicks: 2,
     strokeTicks: true,
     highlights: [
-        {"from": 75, "to": 100, "color": "rgba(50, 255, 50, .5)" },
-        {"from": 35, "to": 75, "color": "rgba(255, 255, 50, .5)" },
-        {"from": 0, "to": 35, "color": "rgba(255, 50, 50, .5)" },
+		{"from": 345, "to": 375, "color": "rgba(255, 50, 50, .5)" },
+        {"from": 290, "to": 345, "color": "rgba(50, 255, 50, .5)" },
+        {"from": 270, "to": 290, "color": "rgba(255, 255, 50, .5)" },
+        {"from": 250, "to": 270, "color": "rgba(255, 50, 50, .5)" },
     ],
     //colorPlate: "#fff",
     colorPlate: "rgba(255,255,255, 0)",
@@ -128,15 +122,17 @@ window.addEventListener('load', () => {
     barBeginCircle: false,
     valueBox: false
 }).draw();
-
+*/
  
+ //var sp_canvas = document.getElementById("speed")
+	//sp_canvas.position(50,50)
    var speed_gauge = new RadialGauge({
     renderTo: 'speed',
-    width: 350,
-    height: 350,
+    width: 600,
+    height: 600,
     units: "Km/h",
     minValue: 0,
-    maxValue: 40,
+    maxValue: 35,
     majorTicks: [
         "0",
         "5",
@@ -145,14 +141,14 @@ window.addEventListener('load', () => {
         "20",
         "25",
         "30",
-        "35",
-        "40"
+        "35"
+        
     ],
     minorTicks: 5,
     strokeTicks: true,
     highlights: [
-        {"from": 35, "to": 40, "color": "rgba(200, 50, 50, .5)"},
-        {"from": 0, "to": 35, "color": "rgba(210, 210, 210, .5)"}
+        {"from": 30, "to": 35, "color": "rgba(200, 50, 50, .5)"},
+        {"from": 0, "to": 30, "color": "rgba(210, 210, 210, .5)"}
     ],
     colorPlate: "rgba(210, 210, 210, 0)", //"#fff",
     colorTitle: "rgba(0,0,0, 1)",
@@ -171,8 +167,8 @@ window.addEventListener('load', () => {
    
    var chg_pwr_gauge = new RadialGauge({
     renderTo: 'chg_pwr',
-    width: 300,
-    height: 300,
+    width: 400,
+    height: 400,
     title: "charge power",
     units: "kW",
     minValue: 0,
@@ -217,8 +213,8 @@ window.addEventListener('load', () => {
    
    var drive_pwr_gauge = new RadialGauge({
     renderTo: 'drive_pwr',
-    width: 300,
-    height: 300,
+    width: 400,
+    height: 400,
     title: "drive power",
     units: "kW",
     minValue: 0,
@@ -261,15 +257,20 @@ window.addEventListener('load', () => {
      
     ws.addEventListener('message', e => {
         let dview = new DataView(e.data)
-        let command = dview.getUint8(0)
-        if (command === 0 && e.data.byteLength === 3) {
-            let batteryValue = dview.getInt16(1, true)/1024 
-            batt_chg_gauge.value = 100 * (1-batteryValue)
-            speed_gauge.value = 40 * batteryValue
-            dist_gauge.value = 25 * batteryValue
-            drive_pwr_gauge.value = 4 * batteryValue
-            chg_pwr_gauge.value = 4 * (1-batteryValue)
-            
+        
+        if (e.data.byteLength === 10) {
+            let speed=(dview.getUint8(0)+dview.getUint8(1)*128)/4096
+            let chg_pwr=(dview.getUint8(2)+dview.getUint8(3)*128)/4096
+            let drive_pwr=(dview.getUint8(4)+dview.getUint8(5)*128)/4096
+            let distance=(dview.getUint8(6)+dview.getUint8(7)*128)
+            let vbat=(dview.getUint8(8)+dview.getUint8(9)*128)/4096
+			distance=(distance-794)/3178
+            //batt_chg_gauge.value = dview.getUint8(7)
+            speed_gauge.value = 40*speed
+            dist_gauge.value = 200*distance
+            drive_pwr_gauge.value = 4*drive_pwr
+            chg_pwr_gauge.value = 4*chg_pwr
+  //          batt_chg_gauge=100*vbat
         } 
     })
  

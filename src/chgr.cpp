@@ -6,22 +6,39 @@ extern "C" {
 #include <dhcpserver.h>
 #include <esp8266.h>
 #include <esp/uart.h>
+
+#include <stdint.h>
+#include <sys/types.h>
+#include <stdlib.h>
+#include <unistd.h>
+//#include <string.h>
+//#include <esp8266.h>
+//#include <esp/uart.h>
+#include <stdio.h>
+#include "FreeRTOS.h"
+#include "task.h"
 }
 
 #include "chgr.h"
-#define SSID "APA_chgr"
+#define SSID "charger"
 #define PRIO_COMMUNICATION  2
 #define PRIO_MAIN_LOOP      (TCPIP_THREAD_PRIO + 1)
+#define PRIO_SERIAL (PRIO_MAIN_LOOP + 1)
 
 static TaskHandle_t xCalculationTask = NULL;
 
+
+
 static void main_loop(void *pvParameters)
+
+
 {
   for (;;)
   {
     xTaskNotifyWait(0, 0, NULL, 1);
 }
 }
+
 static void IRAM chgr_exception_handler()
 {
   _xt_isr_mask(BIT(INUM_TIMER_FRC1));  // Shut down timer
@@ -56,10 +73,13 @@ extern "C" void user_init(void)
   sdk_system_update_cpu_freq(SYS_CPU_160MHZ);
 
   uart_set_baud(0, 115200);
+  // uart_init(BIT_RATE_115200, BIT_RATE_115200);
 
   wifi_setup();
 
+
   xTaskCreate(&httpd_task, "HTTP Daemon", 256, NULL, PRIO_COMMUNICATION, NULL);
   xTaskCreate(&main_loop, "Main loop", 256, NULL, PRIO_MAIN_LOOP, &xCalculationTask);
+  
 //gpio
 }
